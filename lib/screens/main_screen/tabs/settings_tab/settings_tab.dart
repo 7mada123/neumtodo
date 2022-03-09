@@ -129,27 +129,30 @@ class SettingsTab extends HookConsumerWidget {
               ),
               const SizedBox(height: 30),
               if (Platform.isAndroid)
-                NeumorphismButton(
-                  padding: paddingH20V10.copyWith(bottom: 40),
-                  onTap: changeScreenMode,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'full_screen'.tr(),
-                        style: theme.textTheme.headline2,
-                      ),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: useFullScreen,
-                        builder: (final context, final value, final child) {
-                          return Switch(
-                            value: value,
-                            activeColor: theme.primaryColor,
-                            onChanged: changeScreenMode,
-                          );
-                        },
-                      ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: NeumorphismButton(
+                    padding: paddingH20V10,
+                    onTap: changeScreenMode,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'full_screen'.tr(),
+                          style: theme.textTheme.headline2,
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: useFullScreen,
+                          builder: (final context, final value, final child) {
+                            return Switch(
+                              value: value,
+                              activeColor: theme.primaryColor,
+                              onChanged: changeScreenMode,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               const YearSlider(),
@@ -217,8 +220,9 @@ class SettingsTab extends HookConsumerWidget {
                     ),
                     onTap: () {
                       if (Platform.isAndroid)
-                        // TODO
-                        launch('');
+                        launch(
+                          'https://drive.google.com/file/d/1j9NH4X0V6uhHiJ2MY73ZR3asrf_cEgZl/view?usp=sharing',
+                        );
                       else
                         launch(
                           'https://play.google.com/store/apps/details?id=com.hamada.neumtodo',

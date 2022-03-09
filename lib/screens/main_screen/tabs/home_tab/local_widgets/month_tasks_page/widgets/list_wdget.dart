@@ -59,20 +59,28 @@ class ListWdget extends StatelessWidget {
                     ),
                   ),
                   const Divider(height: 10),
-                  ListTile(
-                    title: Text(
-                      "to_timeline".tr(),
-                      style: theme.textTheme.headline4,
-                    ),
-                    shape: shapeBorderRadius10,
-                    trailing: Icon(
-                      Icons.arrow_forward,
-                      color: theme.primaryColor,
-                    ),
+                  InkWell(
                     onTap: () => Navigator.pushNamed(
                       context,
                       'TimelineScreen',
                       arguments: todoDayProvider,
+                    ),
+                    borderRadius: borderRadius10,
+                    child: Padding(
+                      padding: paddingH20V20,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "to_timeline".tr(),
+                            style: theme.textTheme.headline4,
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: theme.primaryColor,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 5),
