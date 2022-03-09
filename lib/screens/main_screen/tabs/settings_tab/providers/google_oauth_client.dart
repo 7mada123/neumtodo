@@ -48,19 +48,23 @@ class GoogleAuthClient extends ChangeNotifier {
   bool get isNotLogin => _drive == null;
 
   Future<void> logIn() async {
-    final client = await clientViaUserConsent(
-      DriveApiData.clientId,
-      scopes,
-      _prompt,
-    );
+    try {
+      final client = await clientViaUserConsent(
+        DriveApiData.clientId,
+        scopes,
+        _prompt,
+      );
 
-    await DriveApiData.saveCredentials(client.credentials);
+      await DriveApiData.saveCredentials(client.credentials);
 
-    _drive = gDrive.DriveApi(client);
+      _drive = gDrive.DriveApi(client);
 
-    notifyListeners();
+      notifyListeners();
 
-    return getBackup();
+      return getBackup();
+    } catch (e) {
+      SnackBarHelper.show(message: e.toString(), type: SnackType.error);
+    }
   }
 
   Future<void> getBackup({final bool forceOverWrite = false}) async {
@@ -96,6 +100,8 @@ class GoogleAuthClient extends ChangeNotifier {
         forceOverWrite,
       );
     } catch (e) {
+      _handelInvaledToken(e);
+
       if (forceOverWrite)
         SnackBarHelper.show(message: e.toString(), type: SnackType.error);
     }
@@ -130,6 +136,8 @@ class GoogleAuthClient extends ChangeNotifier {
           type: SnackType.success,
         );
     } catch (e) {
+      _handelInvaledToken(e);
+
       if (showSnackBar)
         SnackBarHelper.show(message: e.toString(), type: SnackType.error);
     }
@@ -141,6 +149,7 @@ class GoogleAuthClient extends ChangeNotifier {
       await _drive!.files.delete(fileId);
       SnackBarHelper.show(message: 'deleted'.tr(), type: SnackType.success);
     } catch (e) {
+      _handelInvaledToken(e);
       SnackBarHelper.show(message: e.toString(), type: SnackType.error);
     }
   }
@@ -148,7 +157,9 @@ class GoogleAuthClient extends ChangeNotifier {
   Future<void> _deleteBackUp(final String fileId) async {
     try {
       await _drive!.files.delete(fileId);
-    } catch (e) {}
+    } catch (e) {
+      _handelInvaledToken(e);
+    }
   }
 
   Future<void> retriveBackUp(
@@ -164,6 +175,7 @@ class GoogleAuthClient extends ChangeNotifier {
         true,
       );
     } catch (e) {
+      _handelInvaledToken(e);
       SnackBarHelper.show(message: e.toString(), type: SnackType.error);
     }
   }
@@ -239,7 +251,19 @@ class GoogleAuthClient extends ChangeNotifier {
             fileList[i].id!,
           );
       }
-    } catch (e) {}
+    } catch (e) {
+      _handelInvaledToken(e);
+    }
+  }
+
+  void _handelInvaledToken(final Object e) {
+    if (!e.toString().contains('token')) return;
+
+    _drive = null;
+
+    DriveApiData.deleteCredentials();
+
+    notifyListeners();
   }
 }
 
