@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 import './repository/db_provider.dart';
 import './repository/drive_api_data.dart';
@@ -17,15 +18,7 @@ import './screens/main_screen/tabs/settings_tab/providers/setting_data.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isAndroid)
-    await Notifications.init();
-  else {
-    appWindow
-      ..minSize = const Size(460.8, 715.0)
-      ..size = const Size(864.8, 715.0)
-      ..alignment = Alignment.center
-      ..show();
-  }
+  await Notifications.init();
 
   ThemeManger.init();
 
@@ -47,8 +40,9 @@ Future<void> main() async {
       child: ProviderScope(
         overrides: [
           dbProvider.overrideWithValue(db),
-          googleOAuthProvider
-              .overrideWithValue(GoogleAuthClient(dir.path, credentials)),
+          googleOAuthProvider.overrideWithValue(
+            GoogleAuthClient(dir.path, credentials),
+          ),
           settingsDataProvider.overrideWithValue(
             UserSettingsProvider(dir.path),
           ),
@@ -57,4 +51,14 @@ Future<void> main() async {
       ),
     ),
   );
+
+  if (Platform.isAndroid) return;
+
+  appWindow.minSize = const Size(460.8, 715.0);
+
+  await windowManager.ensureInitialized();
+
+  await windowManager.setTitleBarStyle('hidden');
+
+  await windowManager.show();
 }

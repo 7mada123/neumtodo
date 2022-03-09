@@ -128,30 +128,30 @@ class SettingsTab extends HookConsumerWidget {
                 },
               ),
               const SizedBox(height: 30),
-              NeumorphismButton(
-                padding: paddingH20V10,
-                onTap: changeScreenMode,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'full_screen'.tr(),
-                      style: theme.textTheme.headline2,
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: useFullScreen,
-                      builder: (final context, final value, final child) {
-                        return Switch(
-                          value: value,
-                          activeColor: theme.primaryColor,
-                          onChanged: changeScreenMode,
-                        );
-                      },
-                    ),
-                  ],
+              if (Platform.isAndroid)
+                NeumorphismButton(
+                  padding: paddingH20V10.copyWith(bottom: 40),
+                  onTap: changeScreenMode,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'full_screen'.tr(),
+                        style: theme.textTheme.headline2,
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: useFullScreen,
+                        builder: (final context, final value, final child) {
+                          return Switch(
+                            value: value,
+                            activeColor: theme.primaryColor,
+                            onChanged: changeScreenMode,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
               const YearSlider(),
               const SizedBox(height: 30),
               if (isNotLogin) ...[
@@ -239,8 +239,7 @@ class SettingsTab extends HookConsumerWidget {
                       ],
                     ),
                     onTap: () {
-                      // TODO
-                      launch('');
+                      launch('https://github.com/7mada123/neumtodo');
                     },
                   ),
                 ],

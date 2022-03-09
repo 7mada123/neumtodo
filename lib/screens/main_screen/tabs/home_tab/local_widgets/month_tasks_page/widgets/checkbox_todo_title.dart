@@ -24,10 +24,10 @@ class CheckBoxTodoTitle extends StatelessWidget {
     return InkWell(
       borderRadius: borderRadius10,
       onTap: () {
-        context.read(provider.notifier).setSelectIndex(data);
-
         if (MediaQuery.of(context).size.width <= 750)
           context.read(provider.notifier).switchDoneState(data);
+        else
+          context.read(provider.notifier).setSelectIndex(data);
       },
       onLongPress: () => showPopupMenu(
         context,

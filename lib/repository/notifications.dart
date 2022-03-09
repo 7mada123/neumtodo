@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,6 +64,8 @@ class Notifications {
       InitializationSettings(android: _initializationSettingsAndroid);
 
   static Future<void> init() async {
+    if (!Platform.isAndroid) return;
+
     await flutterLocalNotificationsPlugin.initialize(
       _initializationSettings,
       onSelectNotification: (final payload) async {
