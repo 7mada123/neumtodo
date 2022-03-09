@@ -23,10 +23,10 @@ class TodosDb {
 
   static const _table = 'todo_data';
 
-  final _DbModifiedDate dbModifiedDate = _DbModifiedDate();
-
   Future<void> init() async {
-    dbModifiedDate.init(_path);
+    final dbFile = File('$_path/todo_data.db');
+
+    final isExist = dbFile.existsSync();
 
     sqfliteFfiInit();
 
@@ -48,6 +48,11 @@ class TodosDb {
       )
       ''',
     );
+
+    if (!isExist)
+      await dbFile.setLastModified(
+        DateTime.now().subtract(const Duration(days: 360)),
+      );
   }
 
   Future<List<Map<String, Object?>>> getDayTodo({
@@ -99,8 +104,6 @@ class TodosDb {
   }
 
   Future<int> add(final TodoObject data) async {
-    dbModifiedDate.updateDate(_path);
-
     return _db.insert(
       _table,
       data.copyWith(addedDate: DateTime.now().millisecondsSinceEpoch).toMap(),
@@ -108,14 +111,10 @@ class TodosDb {
   }
 
   Future<int> delete(final int id) {
-    dbModifiedDate.updateDate(_path);
-
     return _db.delete(_table, where: 'id = $id');
   }
 
   Future<int> edit(final TodoObject data) {
-    dbModifiedDate.updateDate(_path);
-
     return _db.update(
       _table,
       data.toMap(),
@@ -137,7 +136,19 @@ class TodosDb {
   }
 
   Future<DateTime> getDbModifiedDate() async {
-    return dbModifiedDate.getDate(_path);
+    return File('$_path/todo_data.db').lastModified();
+  }
+
+  Future<void> setDbModifiedDate(final DateTime date) async {
+    return File('$_path/todo_data.db').setLastModified(date);
+  }
+
+  Future<bool> isTableEmpty() {
+    return _db.rawQuery('SELECT day,COUNT(day) as count FROM $_table').then(
+      (final value) {
+        return value.first['count'] == 0;
+      },
+    );
   }
 
   Future<void> _openDb() async {
@@ -147,31 +158,5 @@ class TodosDb {
       _db = await openDatabase(dbPath);
     else
       _db = await databaseFactoryFfi.openDatabase(dbPath);
-  }
-}
-
-class _DbModifiedDate {
-  static const fileName = 'db_modified_date';
-
-  void init(final String path) {
-    final file = File('$path/$fileName.txt');
-
-    if (file.existsSync()) return;
-
-    file.createSync();
-
-    file.writeAsStringSync(
-      DateTime.now().subtract(const Duration(days: 360)).toString(),
-    );
-  }
-
-  Future<DateTime> getDate(final String path) async {
-    return DateTime.parse(
-      await File('$path/$fileName.txt').readAsString(),
-    );
-  }
-
-  Future<void> updateDate(final String path) {
-    return File('$path/$fileName.txt').writeAsString(DateTime.now().toString());
   }
 }

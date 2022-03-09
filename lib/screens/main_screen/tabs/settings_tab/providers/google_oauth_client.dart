@@ -196,22 +196,19 @@ class GoogleAuthClient extends ChangeNotifier {
       fileBytes.insertAll(fileBytes.length, data);
     }, onDone: () async {
       try {
+        final isDbTableEmpty =
+            await router.context.read(dbProvider).isTableEmpty();
+
+        if (isDbTableEmpty)
+          return _setDbBackup(createdTime, fileBytes, forceOverWrite);
+
         final lastModifiedDate =
             await router.context.read(dbProvider).getDbModifiedDate();
 
         final isBackupNew = createdTime.isAfter(lastModifiedDate.toLocal());
 
-        if (isBackupNew) {
-          await router.context.read(dbProvider).updateWithBackup(fileBytes);
-
-          if (forceOverWrite)
-            SnackBarHelper.show(
-              message: 'restored_Backup'.tr(),
-              type: SnackType.success,
-            );
-
-          return;
-        }
+        if (isBackupNew)
+          return _setDbBackup(createdTime, fileBytes, forceOverWrite);
 
         if (forceOverWrite && !isBackupNew) {
           final isCancle = await showCancleDialog('old_backup_warning'.tr());
@@ -220,15 +217,9 @@ class GoogleAuthClient extends ChangeNotifier {
             SnackBarHelper.hide();
             return;
           } else {
-            await router.context.read(dbProvider).updateWithBackup(fileBytes);
+            _setDbBackup(createdTime, fileBytes, forceOverWrite);
           }
         }
-
-        if (forceOverWrite)
-          SnackBarHelper.show(
-            message: 'restored_Backup'.tr(),
-            type: SnackType.success,
-          );
       } catch (e) {
         if (forceOverWrite)
           SnackBarHelper.show(message: e.toString(), type: SnackType.error);
@@ -241,6 +232,23 @@ class GoogleAuthClient extends ChangeNotifier {
 
   void _prompt(final String userPrompt) {
     launch(userPrompt);
+  }
+
+  Future<void> _setDbBackup(
+    final DateTime createdTime,
+    final List<int> fileBytes,
+    final bool forceOverWrite,
+  ) async {
+    await router.context.read(dbProvider).updateWithBackup(fileBytes);
+    await router.context.read(dbProvider).setDbModifiedDate(
+          createdTime.toLocal(),
+        );
+
+    if (forceOverWrite)
+      SnackBarHelper.show(
+        message: 'restored_Backup'.tr(),
+        type: SnackType.success,
+      );
   }
 
   Future<void> _deleteOldBackups(final List<gDrive.File> fileList) async {
