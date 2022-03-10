@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import './month_provider.dart';
@@ -93,12 +91,7 @@ class DayListProvider extends ToDoListProviderInterface {
 
     read(todoDayProvider(data.day).notifier).getData(withLoadingState: false);
 
-    if (Platform.isAndroid)
-      read(notificationsProvider).setScheduleNotification(
-        date: data.shouldCompleteDate,
-        id: id,
-        title: data.title,
-      );
+    read(notificationsProvider).setScheduleNotification(data.copyWith(id: id));
   }
 
   void _handelEmptyList() {

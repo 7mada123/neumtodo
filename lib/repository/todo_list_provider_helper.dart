@@ -33,6 +33,13 @@ abstract class ToDoListProviderInterface
     replaceItem(index, editedTodo);
 
     read(dbProvider).edit(editedTodo);
+
+    if (editedTodo.isCompleted)
+      read(notificationsProvider).cancelNotification(editedTodo.id);
+
+    if (!editedTodo.isCompleted &&
+        editedTodo.shouldCompleteDate.isAfter(DateTime.now()))
+      read(notificationsProvider).setScheduleNotification(editedTodo);
   }
 
   void setSelectIndex(final TodoObject todoObject) {
@@ -58,12 +65,7 @@ abstract class ToDoListProviderInterface
 
     await read(dbProvider).edit(editedValue);
 
-    if (Platform.isAndroid)
-      read(notificationsProvider).setScheduleNotification(
-        date: editedValue.shouldCompleteDate,
-        id: editedValue.id,
-        title: editedValue.title,
-      );
+    read(notificationsProvider).setScheduleNotification(editedValue);
 
     return editedValue;
   }

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../root_app.dart';
+import 'todo_object.dart';
 
 final notificationsProvider = Provider.autoDispose<Notifications>((final ref) {
   ref.maintainState = true;
@@ -13,25 +14,23 @@ final notificationsProvider = Provider.autoDispose<Notifications>((final ref) {
 });
 
 class Notifications {
-  Future<void> setScheduleNotification({
-    required final DateTime date,
-    required final int id,
-    required final String title,
-  }) {
+  Future<void> setScheduleNotification(final TodoObject todoObject) async {
+    if (!Platform.isAndroid) return;
     return flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
+      todoObject.id,
+      todoObject.title,
       null,
-      tz.TZDateTime.from(date, tz.local),
+      tz.TZDateTime.from(todoObject.shouldCompleteDate, tz.local),
       _notificationDetails,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      payload: id.toString(),
+      payload: todoObject.id.toString(),
     );
   }
 
-  Future<void> cancelNotification(final int id) {
+  Future<void> cancelNotification(final int id) async {
+    if (!Platform.isAndroid) return;
     return flutterLocalNotificationsPlugin.cancel(id);
   }
 
