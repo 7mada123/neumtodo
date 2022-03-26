@@ -57,12 +57,12 @@ class _DaysWidgetState extends ConsumerState<MonthTasksWidget> {
     final boxShadow = [
       BoxShadow(
         color: theme.colorScheme.background,
-        offset: const Offset(3, 3),
+        offset: positiveOffset,
         blurRadius: 6,
       ),
       BoxShadow(
         color: theme.colorScheme.secondary,
-        offset: const Offset(-3, -3),
+        offset: negativeOffset,
         blurRadius: 6,
       ),
     ];

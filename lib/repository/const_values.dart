@@ -25,3 +25,6 @@ const paddingH20V10 = EdgeInsets.symmetric(
 );
 
 const twoYears = Duration(days: 720);
+
+const negativeOffset = Offset(-3, -3);
+const positiveOffset = Offset(3, 3);

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../repository/const_values.dart';
 
-const _negativeOffset = Offset(-3, -3);
-const _positiveOffset = Offset(3, 3);
-
 class NeumorphismWidget extends StatelessWidget {
   final double? height;
   final double? width;
@@ -31,12 +28,12 @@ class NeumorphismWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: theme.colorScheme.background,
-              offset: _positiveOffset,
+              offset: positiveOffset,
               blurRadius: 6,
             ),
             BoxShadow(
               color: theme.colorScheme.secondary,
-              offset: _negativeOffset,
+              offset: negativeOffset,
               blurRadius: 6,
             ),
           ],
@@ -89,12 +86,12 @@ class TappableNeumorphismWidget extends StatelessWidget {
               : [
                   BoxShadow(
                     color: theme.colorScheme.background,
-                    offset: _positiveOffset,
+                    offset: positiveOffset,
                     blurRadius: 6,
                   ),
                   BoxShadow(
                     color: theme.colorScheme.secondary,
-                    offset: _negativeOffset,
+                    offset: negativeOffset,
                     blurRadius: 6,
                   ),
                 ],
@@ -144,13 +141,13 @@ class _NeumorphismWidgeButton extends State<NeumorphismButton> {
             BoxShadow(
               blurStyle: isTapped ? BlurStyle.inner : BlurStyle.normal,
               color: theme.colorScheme.background,
-              offset: isTapped ? _negativeOffset : _positiveOffset,
+              offset: isTapped ? negativeOffset : positiveOffset,
               blurRadius: 6,
             ),
             BoxShadow(
               blurStyle: isTapped ? BlurStyle.inner : BlurStyle.normal,
               color: theme.colorScheme.secondary,
-              offset: isTapped ? _positiveOffset : _negativeOffset,
+              offset: isTapped ? positiveOffset : negativeOffset,
               blurRadius: 6,
             ),
           ],

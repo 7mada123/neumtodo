@@ -66,7 +66,9 @@ flutter_native_splash:
 flutter_icons:
   android: true
   ios: false
-  image_path: "assets/icons/icon.png"
+  image_path: "assets/icons/ic_launcher.png"
+  adaptive_icon_foreground: "assets/icons/ic_lancher_adaptive.png"
+  adaptive_icon_background: "#F0F3F6"
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
