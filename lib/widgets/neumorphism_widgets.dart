@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../repository/const_values.dart';
 
+const _negativeOffset = Offset(-3, -3);
+const _positiveOffset = Offset(3, 3);
+
 class NeumorphismWidget extends StatelessWidget {
   final double? height;
   final double? width;
@@ -28,12 +31,12 @@ class NeumorphismWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: theme.colorScheme.background,
-              offset: const Offset(3, 3),
+              offset: _positiveOffset,
               blurRadius: 6,
             ),
             BoxShadow(
               color: theme.colorScheme.secondary,
-              offset: const Offset(-3, -3),
+              offset: _negativeOffset,
               blurRadius: 6,
             ),
           ],
@@ -86,12 +89,12 @@ class TappableNeumorphismWidget extends StatelessWidget {
               : [
                   BoxShadow(
                     color: theme.colorScheme.background,
-                    offset: const Offset(3, 3),
+                    offset: _positiveOffset,
                     blurRadius: 6,
                   ),
                   BoxShadow(
                     color: theme.colorScheme.secondary,
-                    offset: const Offset(-3, -3),
+                    offset: _negativeOffset,
                     blurRadius: 6,
                   ),
                 ],
@@ -118,17 +121,19 @@ class NeumorphismButton extends StatefulWidget {
 }
 
 class _NeumorphismWidgeButton extends State<NeumorphismButton> {
+  void changeIsTapped(final bool state) {
+    if (mounted) setState(() => isTapped = state);
+  }
+
   @override
   Widget build(final context) {
     final theme = Theme.of(context);
 
-    return InkWell(
-      borderRadius: borderRadius10,
+    return GestureDetector(
       onTap: _handelOnTap,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      onTapDown: (final _) => setState(() => isTapped = true),
-      onTapCancel: () => setState(() => isTapped = false),
+      onTapDown: (final _) => changeIsTapped(true),
+      onTapCancel: () => changeIsTapped(false),
+      onTapUp: (final _) => changeIsTapped(false),
       child: AnimatedContainer(
         duration: kThemeChangeDuration,
         child: Padding(padding: widget.padding, child: widget.child),
@@ -137,11 +142,13 @@ class _NeumorphismWidgeButton extends State<NeumorphismButton> {
           borderRadius: borderRadius10,
           boxShadow: [
             BoxShadow(
+              blurStyle: isTapped ? BlurStyle.inner : BlurStyle.normal,
               color: theme.colorScheme.background,
               offset: isTapped ? _negativeOffset : _positiveOffset,
               blurRadius: 6,
             ),
             BoxShadow(
+              blurStyle: isTapped ? BlurStyle.inner : BlurStyle.normal,
               color: theme.colorScheme.secondary,
               offset: isTapped ? _positiveOffset : _negativeOffset,
               blurRadius: 6,
@@ -161,7 +168,4 @@ class _NeumorphismWidgeButton extends State<NeumorphismButton> {
     if (!mounted) return;
     setState(() => isTapped = false);
   }
-
-  static const _negativeOffset = Offset(-3, -3);
-  static const _positiveOffset = Offset(3, 3);
 }
